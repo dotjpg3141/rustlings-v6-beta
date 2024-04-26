@@ -35,8 +35,36 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of
 // Person Otherwise, then return an instantiated Person object with the results
 
+struct PersonParseError;
+
+fn parse(s: &str) -> Result<Person, PersonParseError> {
+    let mut parts = s.split(',');
+
+    let name = parts.next().ok_or(PersonParseError)?;
+    if name.is_empty() {
+        return Err(PersonParseError);
+    }
+
+    let age = parts
+        .next()
+        .ok_or(PersonParseError)?
+        .parse::<usize>()
+        .map_err(|_| PersonParseError)?;
+
+    if parts.next().is_some() {
+        return Err(PersonParseError);
+    }
+
+    Ok(Person {
+        name: name.to_string(),
+        age,
+    })
+}
+
 impl From<&str> for Person {
-    fn from(s: &str) -> Person {}
+    fn from(s: &str) -> Person {
+        parse(s).unwrap_or_default()
+    }
 }
 
 fn main() {
