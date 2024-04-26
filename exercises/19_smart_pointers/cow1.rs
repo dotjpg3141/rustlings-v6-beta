@@ -10,7 +10,18 @@
 
 use std::borrow::Cow;
 
-fn abs_all<'a, 'b>(input: &'a mut Cow<'b, [i32]>) -> &'a mut Cow<'b, [i32]> {
+// fn abs_all<'a, 'b>(input: &'a mut Cow<'b, [i32]>) -> &'a mut Cow<'b, [i32]> {
+//     for i in 0..input.len() {
+//         let v = input[i];
+//         if v < 0 {
+//             // Clones into a vector if not already owned.
+//             input.to_mut()[i] = -v;
+//         }
+//     }
+//     input
+// }
+
+fn abs_all(mut input: Cow<'_, [i32]>) -> Cow<'_, [i32]> {
     for i in 0..input.len() {
         let v = input[i];
         if v < 0 {
@@ -33,8 +44,8 @@ mod tests {
     fn reference_mutation() -> Result<(), &'static str> {
         // Clone occurs because `input` needs to be mutated.
         let slice = [-1, 0, 1];
-        let mut input = Cow::from(&slice[..]);
-        match abs_all(&mut input) {
+        let input = Cow::from(&slice[..]);
+        match abs_all(input) {
             Cow::Owned(_) => Ok(()),
             _ => Err("Expected owned value"),
         }
@@ -44,9 +55,10 @@ mod tests {
     fn reference_no_mutation() -> Result<(), &'static str> {
         // No clone occurs because `input` doesn't need to be mutated.
         let slice = [0, 1, 2];
-        let mut input = Cow::from(&slice[..]);
-        match abs_all(&mut input) {
-            // TODO
+        let input = Cow::from(&slice[..]);
+        match abs_all(input) {
+            Cow::Borrowed(_) => Ok(()),
+            _ => Err("Expected borrowed value"),
         }
     }
 
@@ -56,9 +68,10 @@ mod tests {
         // case no mutation occurs and thus also no clone, but the result is
         // still owned because it was never borrowed or mutated.
         let slice = vec![0, 1, 2];
-        let mut input = Cow::from(slice);
-        match abs_all(&mut input) {
-            // TODO
+        let input = Cow::from(slice);
+        match abs_all(input) {
+            Cow::Owned(_) => Ok(()),
+            _ => Err("Expected owned value"),
         }
     }
 
@@ -68,9 +81,10 @@ mod tests {
         // case the call to `to_mut()` in the abs_all() function returns a
         // reference to the same data as before.
         let slice = vec![-1, 0, 1];
-        let mut input = Cow::from(slice);
-        match abs_all(&mut input) {
-            // TODO
+        let input = Cow::from(slice);
+        match abs_all(input) {
+            Cow::Owned(_) => Ok(()),
+            _ => Err("Expected owned value"),
         }
     }
 }
