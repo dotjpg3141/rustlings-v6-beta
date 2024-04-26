@@ -1,7 +1,7 @@
 // Make me compile without adding new lines -- just changing existing lines! (no
 // lines with multiple semicolons necessary!)
 
-fn fill_vec(vec: Vec<i32>) -> Vec<i32> {
+fn fill_vec(mut vec: Vec<i32>) -> Vec<i32> {
     vec.push(88);
 
     vec

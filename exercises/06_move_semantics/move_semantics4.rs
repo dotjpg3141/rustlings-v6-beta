@@ -5,7 +5,7 @@
 // `fill_vec()` no longer takes `vec: Vec<i32>` as argument - don't change this!
 fn fill_vec() -> Vec<i32> {
     // Instead, let's create and fill the Vec in here - how do you do that?
-    let mut vec = vec;
+    let mut vec = vec![22, 44, 66];
 
     vec.push(88);
 
@@ -24,7 +24,7 @@ mod tests {
     fn move_semantics4() {
         let vec0 = vec![22, 44, 66];
 
-        let vec1 = fill_vec(vec0);
+        let vec1 = fill_vec();
 
         assert_eq!(vec1, vec![22, 44, 66, 88]);
     }
